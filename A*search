@@ -1,0 +1,51 @@
+import heapq
+
+graph = {
+    'Home': [('School', 4), ('Mall', 2)],
+    'School': [('Office', 5)],
+    'Mall': [('Office', 8), ('Hospital', 10)],
+    'Office': [('Destination', 3)],
+    'Hospital': [('Destination', 2)],
+    'Destination': []
+}
+
+heuristic = {
+    'Home': 10,
+    'School': 7,
+    'Mall': 6,
+    'Office': 3,
+    'Hospital': 2,
+    'Destination': 0
+}
+
+def astar(graph, start, goal):
+    pq = []
+    heapq.heappush(pq, (0, start))
+    g_cost = {start: 0}
+    parent = {start: None}
+
+    while pq:
+        _, current = heapq.heappop(pq)
+
+        if current == goal:
+            path = []
+            while current:
+                path.append(current)
+                current = parent[current]
+            return path[::-1]
+
+        for neighbor, cost in graph[current]:
+            new_cost = g_cost[current] + cost
+
+            if neighbor not in g_cost or new_cost < g_cost[neighbor]:
+                g_cost[neighbor] = new_cost
+                priority = new_cost + heuristic[neighbor]
+                heapq.heappush(pq, (priority, neighbor))
+                parent[neighbor] = current
+
+    return None
+
+path = astar(graph, 'Home', 'Destination')
+
+print("Best Route:")
+print(" -> ".join(path)) 
