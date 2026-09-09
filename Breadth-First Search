@@ -1,0 +1,37 @@
+from collections import deque
+
+social = {
+    "Alice": ["Bob", "Charlie"],
+    "Bob": ["Alice", "David", "Eva"],
+    "Charlie": ["Alice", "Frank"],
+    "David": ["Bob"],
+    "Eva": ["Bob", "George"],
+    "Frank": ["Charlie"],
+    "George": ["Eva"]
+}
+
+def bfs(graph, start, goal):
+    queue = deque([[start]])
+    visited = set()
+
+    while queue:
+        path = queue.popleft()
+        person = path[-1]
+
+        if person == goal:
+            return path
+
+        if person not in visited:
+            visited.add(person)
+
+            for friend in graph[person]:
+                new_path = list(path)
+                new_path.append(friend)
+                queue.append(new_path)
+
+    return None
+
+path = bfs(social, "Alice", "George")
+
+print("Friend Connection:")
+print(" -> ".join(path))
